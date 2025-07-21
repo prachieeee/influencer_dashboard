@@ -25,6 +25,10 @@ if all([influencers_file, posts_file, tracking_file, payouts_file]):
 
     # Merge tracking and payouts for ROAS
     merged_df = tracking_df.merge(payouts_df, on="influencer_id")
+
+    # Safely calculate ROAS
+    merged_df["revenue"] = merged_df["revenue"].fillna(0)
+    merged_df["total_payout"] = merged_df["total_payout"].replace(0, 1).fillna(1)  # Prevent divide by zero
     merged_df["ROAS"] = merged_df["revenue"] / merged_df["total_payout"]
 
     # Filters
