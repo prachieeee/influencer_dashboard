@@ -25,14 +25,15 @@ if all([influencers_file, posts_file, tracking_file, payouts_file]):
         payouts_df = pd.read_csv(payouts_file)
 
         # Ensure required columns exist in tracking and payouts
-        required_tracking_cols = ["influencer_id", "revenue", "orders", "campaign"]
-        required_payouts_cols = ["influencer_id", "total_payout"]
-        for col in required_tracking_cols:
+        default_tracking_cols = {"influencer_id": 0, "revenue": 0, "orders": 0, "campaign": "Unknown"}
+        default_payouts_cols = {"influencer_id": 0, "total_payout": 0}
+
+        for col, default in default_tracking_cols.items():
             if col not in tracking_df.columns:
-                tracking_df[col] = 0
-        for col in required_payouts_cols:
+                tracking_df[col] = default
+        for col, default in default_payouts_cols.items():
             if col not in payouts_df.columns:
-                payouts_df[col] = 0
+                payouts_df[col] = default
 
         # Merge tracking and payouts for ROAS
         merged_df = tracking_df.merge(payouts_df, on="influencer_id", how="left")
