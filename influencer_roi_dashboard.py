@@ -27,8 +27,8 @@ if all([influencers_file, posts_file, tracking_file, payouts_file]):
         for df, name, cols in [
             (influencers_df, "influencers", ["id", "name", "category", "gender", "follower_count", "platform"]),
             (posts_df, "posts", ["influencer_id", "platform", "date", "URL", "caption", "reach", "likes", "comments"]),
-            (tracking_df, "tracking_data", ["source", "campaign", "influencer_id", "user_id", "product", "date", "orders", "revenue"]),
-            (payouts_df, "payouts", ["influencer_id", "basis", "rate", "orders", "total_payout"])
+            (tracking_df, "tracking_data", ["source", "campaign", "influencer_id", "user_id", "product", "date", "revenue"]),
+            (payouts_df, "payouts", ["influencer_id", "basis", "rate", "total_payout"])
         ]:
             missing_cols = [col for col in cols if col not in df.columns]
             if missing_cols:
@@ -53,13 +53,12 @@ if all([influencers_file, posts_file, tracking_file, payouts_file]):
 
         # Campaign Summary
         st.subheader("📊 Campaign Performance Summary")
-        campaign_summary = tracking_df.groupby("campaign").agg({"orders": "sum", "revenue": "sum"}).reset_index()
+        campaign_summary = tracking_df.groupby("campaign").agg({"sum", "revenue": "sum"}).reset_index()
         st.dataframe(campaign_summary)
 
         # ROAS Summary
         st.subheader("📈 ROAS by Influencer")
         roas_df = merged_df.groupby("influencer_id").agg({
-            "orders": "sum",
             "revenue": "sum",
             "total_payout": "sum",
             "ROAS": "mean"
